@@ -1,0 +1,109 @@
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 16px;
+  margin-bottom: 14px;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.35);
+}
+
+.sectionTitle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.heading {
+  margin: 0;
+  font-size: 18px;
+}
+
+.select {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px;
+  color: var(--text);
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.infoCard {
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px;
+}
+
+.label {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.subAmount {
+  margin: 4px 0 10px;
+  font-size: 16px;
+}
+
+.balance {
+  margin: 4px 0 10px;
+  font-size: 26px;
+}
+
+.transactionList {
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 10px;
+}
+
+.transaction {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 4px;
+  border-bottom: 1px solid var(--border);
+}
+
+.transaction:last-child {
+  border-bottom: none;
+}
+
+.title {
+  margin: 0 0 4px;
+  font-weight: 600;
+}
+
+.chip {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  padding: 4px 8px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.time {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.amount {
+  margin: 0;
+  font-weight: 700;
+}
+
+.positive {
+  color: #34d399;
+}
+
+.muted {
+  color: var(--muted);
+  margin: 0;
+}

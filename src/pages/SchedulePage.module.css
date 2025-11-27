@@ -1,0 +1,137 @@
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 16px;
+  margin-bottom: 14px;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.35);
+}
+
+.sectionTitle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.heading {
+  margin: 0;
+  font-size: 18px;
+}
+
+.pill {
+  background: rgba(110, 231, 183, 0.15);
+  color: var(--accent);
+  border: 1px solid rgba(110, 231, 183, 0.25);
+  padding: 8px 12px;
+  border-radius: 14px;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.small {
+  padding: 6px 10px;
+  font-size: 12px;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.scheduleList {
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 10px;
+}
+
+.schedule {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 4px;
+  border-bottom: 1px solid var(--border);
+}
+
+.schedule:last-child {
+  border-bottom: none;
+}
+
+.title {
+  margin: 0 0 4px;
+  font-weight: 600;
+}
+
+.time {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.amount {
+  margin: 0;
+  font-weight: 700;
+}
+
+.muted {
+  color: var(--muted);
+  margin: 0;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.select,
+.field input {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 10px;
+  color: var(--text);
+  font-size: 14px;
+}
+
+.select:focus,
+.field input:focus {
+  outline: 1px solid rgba(110, 231, 183, 0.6);
+}
+
+.primary {
+  grid-column: span 2;
+  background: linear-gradient(135deg, #6ee7b7, #22d3ee);
+  color: #0b1020;
+  border: none;
+  border-radius: 14px;
+  padding: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 140ms ease, box-shadow 140ms ease;
+}
+
+.primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(34, 211, 238, 0.25);
+}
+
+@media (max-width: 480px) {
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .primary {
+    grid-column: span 1;
+  }
+}
