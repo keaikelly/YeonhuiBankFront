@@ -1,0 +1,74 @@
+.wrapper {
+  padding: 16px;
+}
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.35);
+}
+
+.header {
+  margin-bottom: 10px;
+}
+
+.title {
+  margin: 0 0 4px 0;
+  font-size: 20px;
+}
+
+.muted {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.form {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.input {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px;
+  color: var(--text);
+}
+
+.button {
+  background: linear-gradient(135deg, #6ee7b7, #22d3ee);
+  border: none;
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.item {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px;
+}
+
+.label {
+  margin: 0;
+  font-weight: 700;
+}
+
+.meta {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+}

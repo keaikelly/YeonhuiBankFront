@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import TransferPage from "./TransferPage";
 import { fetchMyAccountsAPI } from "../api/accounts";
 import { createTransferAPI } from "../api/transfers";
+import { fetchAbnormalByAccountAPI } from "../api/abnormalTransfers";
 
 function TransferContainer() {
   const { accountId } = useParams();
@@ -41,6 +42,16 @@ function TransferContainer() {
         memo: form.memo,
       });
       window.alert("이체가 완료되었습니다.");
+      try {
+        // GET /api/abn-transfers/account/{accountNum} : 이체 후 이상거래 알림 조회
+        const res = await fetchAbnormalByAccountAPI(form.from);
+        const data = res?.data?.data ?? res?.data ?? [];
+        if (Array.isArray(data) && data.length > 0) {
+          window.alert(`이상거래 알림 ${data.length}건이 감지되었습니다.`);
+        }
+      } catch (err) {
+        // 알림 조회 실패는 무시
+      }
       setForm((prev) => ({ ...prev, amount: "", memo: "" }));
     } catch (err) {
       window.alert("이체에 실패했습니다.");

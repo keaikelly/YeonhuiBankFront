@@ -114,6 +114,30 @@ body,
   font-size: 13px;
 }
 
+.page-nav {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.nav-link {
+  display: block;
+  text-align: center;
+  padding: 10px 8px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--text);
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.04);
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.nav-link:hover {
+  border-color: rgba(110, 231, 183, 0.4);
+}
+
 .start-panel .link-button {
   display: inline-block;
   text-align: center;
