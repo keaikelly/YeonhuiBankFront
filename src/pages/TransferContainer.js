@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import TransferPage from "./TransferPage";
 import { fetchMyAccountsAPI } from "../api/accounts";
+import { createTransferAPI } from "../api/transfers";
 
 function TransferContainer() {
   const { accountId } = useParams();
@@ -10,6 +11,7 @@ function TransferContainer() {
 
   useEffect(() => {
     const load = async () => {
+      // GET /api/accounts/me : 내 계좌 목록 조회
       try {
         const res = await fetchMyAccountsAPI();
         const data = res?.data?.data ?? res?.data ?? {};
@@ -28,9 +30,21 @@ function TransferContainer() {
     return accounts.find((a) => a.accountNum === form.from || a.id === form.from) || accounts[0];
   }, [accounts, form.from]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    window.alert("송금 기능은 API 연동 후 동작합니다.");
+    try {
+      // POST /api/transactions/transfer : 이체 요청
+      await createTransferAPI({
+        fromAccountNum: form.from,
+        toAccountNum: form.to,
+        amount: Number(form.amount || 0),
+        memo: form.memo,
+      });
+      window.alert("이체가 완료되었습니다.");
+      setForm((prev) => ({ ...prev, amount: "", memo: "" }));
+    } catch (err) {
+      window.alert("이체에 실패했습니다.");
+    }
   };
 
   return (

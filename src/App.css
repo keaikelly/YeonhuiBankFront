@@ -93,6 +93,27 @@ body,
   font-weight: 600;
 }
 
+.app-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.15), rgba(110, 231, 183, 0.12));
+}
+
+.app-badge {
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+.app-sub {
+  color: var(--muted);
+  font-size: 13px;
+}
+
 .start-panel .link-button {
   display: inline-block;
   text-align: center;

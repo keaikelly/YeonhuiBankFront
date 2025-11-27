@@ -12,6 +12,7 @@ function MainPage() {
   useEffect(() => {
     const loadProfile = async () => {
       try {
+        // GET /api/users/me : 이름 조회
         const res = await fetchMyInfoAPI();
         const data = res?.data?.data ?? res?.data ?? {};
         if (data?.name) {
@@ -27,6 +28,7 @@ function MainPage() {
   useEffect(() => {
     const loadAccounts = async () => {
       try {
+        // GET /api/accounts/me : 내 계좌 목록 조회
         const res = await fetchMyAccountsAPI();
         const data = res?.data?.data ?? res?.data ?? {};
         const content = data?.content || data?.data?.content || [];

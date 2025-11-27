@@ -8,10 +8,9 @@ function AppFrame({ children }) {
     <div className="App">
       <div className="phone-frame">
         {showChrome && (
-          <div className="top-bar">
-            <span className="carrier">YEONHUI</span>
-            <span className="time">09:41</span>
-            <span className="status">5G · 82%</span>
+          <div className="app-banner">
+            <span className="app-badge">YEONHUI</span>
+            <span className="app-sub">Secure Banking</span>
           </div>
         )}
         {children}

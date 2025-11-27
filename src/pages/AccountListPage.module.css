@@ -1,0 +1,79 @@
+.wrapper {
+  padding: 16px;
+}
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.35);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.eyebrow {
+  color: var(--muted);
+  margin: 0 0 4px 0;
+  font-size: 14px;
+}
+
+.title {
+  margin: 0;
+  font-size: 20px;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.item {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  color: var(--text);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 120ms ease, border-color 120ms ease;
+}
+
+.item:hover {
+  transform: translateY(-1px);
+  border-color: rgba(110, 231, 183, 0.4);
+}
+
+.label {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.meta {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.amount {
+  margin: 0;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.empty {
+  color: var(--muted);
+  margin: 0;
+  font-size: 14px;
+}
