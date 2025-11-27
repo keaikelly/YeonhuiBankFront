@@ -1,0 +1,107 @@
+.wrapper {
+  padding: 16px;
+}
+
+.card {
+  background: linear-gradient(140deg, rgba(124, 58, 237, 0.2), rgba(14, 165, 233, 0.1));
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 20px;
+  padding: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.title {
+  margin: 4px 0 0;
+  font-size: 20px;
+}
+
+.pill {
+  background: rgba(110, 231, 183, 0.15);
+  color: var(--accent);
+  border: 1px solid rgba(110, 231, 183, 0.25);
+  padding: 8px 12px;
+  border-radius: 14px;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.field input {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 10px;
+  color: var(--text);
+  font-size: 14px;
+}
+
+.field input:focus {
+  outline: 1px solid rgba(110, 231, 183, 0.6);
+}
+
+.primary {
+  background: linear-gradient(135deg, #6ee7b7, #22d3ee);
+  color: #0b1020;
+  border: none;
+  border-radius: 14px;
+  padding: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 140ms ease, box-shadow 140ms ease;
+}
+
+.primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(34, 211, 238, 0.25);
+}
+
+.signupCta {
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--text);
+  font-size: 14px;
+}
+
+.signupButton {
+  background: rgba(124, 58, 237, 0.2);
+  border: 1px solid rgba(124, 58, 237, 0.4);
+  color: #f8fafc;
+  padding: 10px 14px;
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: 700;
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+
+.signupButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(124, 58, 237, 0.3);
+}
