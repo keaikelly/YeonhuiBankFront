@@ -18,12 +18,15 @@ function AppFrame({ children }) {
               <Link to="/main" className="nav-link">
                 홈
               </Link>
-              <Link to="/account" className="nav-link">
-                계좌목록
-              </Link>
-              <Link to="/transfer/any" className="nav-link">
-                이체
-              </Link>
+            <Link to="/account" className="nav-link">
+              계좌목록
+            </Link>
+            <Link to="/account/create" className="nav-link">
+              계좌개설
+            </Link>
+            <Link to="/transfer/any" className="nav-link">
+              이체
+            </Link>
               <Link to="/schedule/any" className="nav-link">
                 예약이체
               </Link>
