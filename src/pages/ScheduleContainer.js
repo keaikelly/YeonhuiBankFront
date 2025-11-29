@@ -101,13 +101,12 @@ function ScheduleContainer() {
       }
 
       await createScheduleAPI({
-        fromAccountId: fromId,
-        toAccountId: toId,
+        fromAccountId: form.from,
+        toAccountId: form.to,
         amount: Number(form.amount || 0),
         memo: form.memo,
-        // ⚠️ 아래 frequency / startDate / runTime 등은
-        // 백엔드 DTO 설계에 맞게 더 넣어줘야 할 수도 있음
-        // 지금은 구조만 맞춰둔 상태
+        frequency: form.day,
+  
       });
 
       window.alert("예약이체가 등록되었습니다.");
@@ -126,7 +125,7 @@ function ScheduleContainer() {
       onSubmit={handleSubmit}
       // 🔹 드롭다운에 쓸 계좌 목록: value는 id, label은 계좌번호
       accounts={accounts.map((a) => ({
-        id: String(a.id),           // **id 기반으로 통일**
+        id: a.accountNum || a.id,          // **id 기반으로 통일**
         name: a.accountNum || "계좌",
       }))}
       selectedAccount={selectedAccount}
