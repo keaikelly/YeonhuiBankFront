@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import SchedulePage from "./SchedulePage";
-import { fetchMyAccountsAPI } from "../api/accounts";
+import { fetchMyAccountsAPI, fetchAccountAPI } from "../api/accounts";
 import {
   createScheduleAPI,
   fetchSchedulesByFromAccountAPI,
@@ -92,17 +92,37 @@ function ScheduleContainer() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const fromId = Number(form.from);
-      const toId = Number(form.to);
+      const fromAcc = accounts.find(
+        (a) =>
+          a.accountNum === form.from || String(a.accountId) === String(form.from)
+      );
 
-      if (Number.isNaN(fromId) || Number.isNaN(toId)) {
-        window.alert("출금/입금 계좌 선택이 잘못되었습니다.");
+      if (!fromAcc) {
+        window.alert("보내는 계좌를 찾을 수 없습니다.");
         return;
       }
 
+      const fromId = fromAcc.accountId || fromAcc.id; 
+      let toId = null;
+
+      const toAccInMyList = accounts.find(
+        (a) => a.accountNum === form.to || String(a.accountId) === String(form.to)
+      );
+      if (toAccInMyList) {
+        toId = toAccInMyList.accountId || toAccInMyList.id;
+      } else {
+        
+        const res = await fetchAccountAPI(form.to); 
+        const data = res?.data?.data ?? res?.data ?? {};
+        if (!data.accountId && !data.id) {
+          window.alert("받는 계좌를 찾을 수 없습니다.");
+          return;
+        }
+        toId = data.accountId || data.id;
+      }
       await createScheduleAPI({
-        fromAccountId: form.from,
-        toAccountId: form.to,
+        fromAccountId: fromId,
+        toAccountId: toId,
         amount: Number(form.amount || 0),
         memo: form.memo,
         frequency: form.day,
