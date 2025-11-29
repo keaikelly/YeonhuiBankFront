@@ -27,7 +27,7 @@ function App() {
           <Route path="/account/create" element={<AccountCreatePage />} />
           <Route path="/account" element={<AccountListPage />} />
           <Route
-            path="/account/:accountId"
+            path="/account/:accountNum"
             element={<AccountDetailContainer />}
           />
           <Route path="/transfer/:accountId" element={<TransferContainer />} />
