@@ -17,6 +17,11 @@ function LoginPage() {
     }
     try {
       setLoading(true);
+      // 이전 로그인 토큰 제거
+      localStorage.removeItem("token");
+      localStorage.removeItem("name");
+      localStorage.removeItem("user");
+
       const res = await loginAPI({ userId, password });
       const token = res?.data?.data?.token || res?.data?.token;
       const name = res?.data?.data?.name || userId;
@@ -24,9 +29,16 @@ function LoginPage() {
         localStorage.setItem("token", token);
         localStorage.setItem("name", name);
       }
+      // 로그인 성공 직후
+      console.log("받은 토큰:", token);
+      localStorage.setItem("token", token);
       window.alert("로그인 완료");
       navigate("/main");
     } catch (err) {
+      // 실패 시에도 토큰 정리
+      localStorage.removeItem("token");
+      localStorage.removeItem("name");
+      localStorage.removeItem("user");
       window.alert("로그인에 실패했습니다. 아이디/비밀번호를 확인하세요.");
       console.error(err);
     } finally {
