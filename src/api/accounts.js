@@ -3,7 +3,7 @@ import { request } from "../utils/request";
 
 // 계좌 생성: POST /api/accounts
 export const createAccountAPI = (payload) => {
-  return request(accountInstance, "post", "/", payload);
+  return request(accountInstance, "post", "", payload);
 };
 
 // 단일 계좌 조회(소유자 검증): GET /api/accounts/{accountNum}

@@ -4,18 +4,20 @@ import AccountDetailPage from "./AccountDetailPage";
 import { fetchAccountAPI } from "../api/accounts";
 
 function AccountDetailContainer() {
-  const { accountId } = useParams();
+  const { accountNum } = useParams();   // URL에서 계좌번호 받기
   const [account, setAccount] = useState(null);
   const [transactions, setTransactions] = useState([]);
 
   useEffect(() => {
     const load = async () => {
-      // GET /api/accounts/{accountNum} : 계좌 상세 조회
       try {
-        const res = await fetchAccountAPI(accountId);
+        // GET /api/accounts/{accountNum}
+        const res = await fetchAccountAPI(accountNum);
         const data = res?.data?.data ?? res?.data ?? {};
+
         setAccount({
-          id: data.accountNum || data.id || accountId,
+          id: data.accountId || data.id,      // PK
+          accountNum: data.accountNum,       // 계좌번호
           balance: data.balance || 0,
           limit: data.dailyLimitAmt || 0,
         });
@@ -23,18 +25,16 @@ function AccountDetailContainer() {
         setAccount(null);
       }
     };
-    if (accountId) load();
-  }, [accountId]);
+    if (accountNum) load();
+  }, [accountNum]);
 
-  if (!account) {
-    return null;
-  }
+  if (!account) return null;
 
   return (
     <AccountDetailPage
       account={account}
       transactions={transactions}
-      accounts={[{ id: account.id, name: account.id }]}
+      accounts={[{ id: account.id, name: account.accountNum }]}
       onSelect={() => {}}
     />
   );
