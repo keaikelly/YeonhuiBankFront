@@ -28,8 +28,11 @@ function MainPage() {
   useEffect(() => {
     const loadAccounts = async () => {
       try {
-        // GET /api/accounts/me : 내 계좌 목록 조회
-        const res = await fetchMyAccountsAPI();
+        const res = await fetchMyAccountsAPI({
+          page: 0,
+          size: 10,
+          sort: ["createdAt,desc"],
+        });
         const data = res?.data?.data ?? res?.data ?? {};
         const content = data?.content || data?.data?.content || [];
         setAccounts(content);
@@ -53,10 +56,11 @@ function MainPage() {
         <div>
           <p className={styles.eyebrow}>환영합니다</p>
           <h1 className={styles.title}>
-            {profileName ? `${profileName}님, 좋은 하루에요` : "계정을 연동하세요"}
+            {profileName
+              ? `${profileName}님, 좋은 하루에요`
+              : "계정을 연동하세요"}
           </h1>
         </div>
-        <span className={styles.pill}>프리미엄</span>
       </header>
 
       <section className={styles.balanceCard}>
@@ -65,9 +69,6 @@ function MainPage() {
             <p className={styles.label}>총 자산</p>
             <p className={styles.balance}>{formatAmount(totalBalance)}</p>
           </div>
-          <span className={styles.trend}>
-            {hasAccount ? "▲ +3.2% 이번 주" : "연동 후 표시"}
-          </span>
         </div>
         <div className={styles.accountList}>
           {hasAccount ? (
@@ -78,7 +79,7 @@ function MainPage() {
                 onClick={() => navigate(`/account/${acc.accountNum || acc.id}`)}
               >
                 <p className={styles.label}>
-                  {acc.accountType || "계좌"} · {acc.accountNum || acc.id}
+                  계좌번호 | {acc.accountNum || acc.id}
                 </p>
                 <p className={styles.subAmount}>{formatAmount(acc.balance)}</p>
                 <div className={styles.cardActions}>

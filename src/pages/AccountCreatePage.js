@@ -49,14 +49,14 @@ function AccountCreatePage() {
               placeholder="예: 112-000-000000"
             />
           </label>
-          <label className={styles.field}>
+          {/* <label className={styles.field}>
             <span>계좌 유형</span>
             <select value={accountType} onChange={(e) => setAccountType(e.target.value)}>
               <option value="NORMAL">입출금</option>
               <option value="SAVING">저축</option>
               <option value="EMERGENCY">비상금</option>
             </select>
-          </label>
+          </label> */}
           <label className={styles.field}>
             <span>초기 잔액</span>
             <input

@@ -43,17 +43,13 @@ failureReasonInstance.defaults.baseURL += "/failure-reasons";
 // -----------------------------------------------------------------
 // 2. JWT 인터셉터 로직 함수 정의
 // -----------------------------------------------------------------
+
 const attachTokenInterceptor = (instance) => {
   instance.interceptors.request.use(
     (config) => {
       const token = localStorage.getItem("token");
-      console.log(
-        "[REQ]",
-        config.baseURL + (config.url || ""),
-        "token=",
-        token
-      );
 
+      // 🚨 [필수 복구] 토큰을 붙이지 않아도 되는 public 경로 로직
       const isPublic =
         config.url?.includes("/signup") ||
         config.url?.includes("/login") ||
@@ -61,12 +57,12 @@ const attachTokenInterceptor = (instance) => {
         config.url?.includes("/logs/account") ||
         config.url?.includes("/abn-transfers");
 
+      // 💡 [수정] 토큰이 존재하고 Public 경로가 아닐 때만 헤더를 설정합니다.
       if (token && !isPublic) {
-        config.headers = config.headers || {};
         config.headers.Authorization = `Bearer ${token}`;
-        console.log("→ Authorization 헤더 설정됨");
-      } else {
-        console.log("→ 토큰 없음 또는 public URL, 헤더 안 붙임");
+      } else if (!token && !isPublic) {
+        // 토큰이 없는데 인증이 필요한 경로라면, 헤더를 설정하지 않아
+        // 백엔드에서 403을 발생시킵니다 (정상적인 인가 실패 처리).
       }
 
       return config;
@@ -74,33 +70,6 @@ const attachTokenInterceptor = (instance) => {
     (error) => Promise.reject(error)
   );
 };
-
-// const attachTokenInterceptor = (instance) => {
-//   instance.interceptors.request.use(
-//     (config) => {
-//       const token = localStorage.getItem("token");
-
-//       // 🚨 [필수 복구] 토큰을 붙이지 않아도 되는 public 경로 로직
-//       const isPublic =
-//         config.url?.includes("/signup") ||
-//         config.url?.includes("/login") ||
-//         config.url?.includes("/failure-reasons") ||
-//         config.url?.includes("/logs/account") ||
-//         config.url?.includes("/abn-transfers");
-
-//       // 💡 [수정] 토큰이 존재하고 Public 경로가 아닐 때만 헤더를 설정합니다.
-//       if (token && !isPublic) {
-//         config.headers.Authorization = `Bearer ${token}`;
-//       } else if (!token && !isPublic) {
-//         // 토큰이 없는데 인증이 필요한 경로라면, 헤더를 설정하지 않아
-//         // 백엔드에서 403을 발생시킵니다 (정상적인 인가 실패 처리).
-//       }
-
-//       return config;
-//     },
-//     (error) => Promise.reject(error)
-//   );
-// };
 
 attachTokenInterceptor(defaultInstance);
 attachTokenInterceptor(userInstance);
@@ -112,6 +81,18 @@ attachTokenInterceptor(abnTransferInstance);
 attachTokenInterceptor(logInstance);
 attachTokenInterceptor(transferLimitInstance);
 attachTokenInterceptor(failureReasonInstance);
+
+defaultInstance.interceptors.response.use(
+  (response) => response, // 성공 응답은 그대로 리턴
+  (error) => {
+    // 🚨 403 에러가 발생했을 때 상세 에러 데이터를 콘솔에 출력
+    if (error.response) {
+      console.error("🚨 서버 에러 상세 정보 (403):", error.response.data);
+      console.error("🚨 HTTP 상태 코드:", error.response.status);
+    }
+    return Promise.reject(error);
+  }
+);
 
 // -----------------------------------------------------------------
 // 4. Export
@@ -129,3 +110,4 @@ export {
   transferLimitInstance,
   failureReasonInstance,
 };
+//예약이체 예약로그 계좌개설 api 안
