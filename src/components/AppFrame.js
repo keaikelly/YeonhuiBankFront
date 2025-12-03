@@ -25,9 +25,7 @@ function AppFrame({ children }) {
               <Link to="/main" className="nav-link">
                 홈
               </Link>
-              <Link to="/account" className="nav-link">
-                계좌목록
-              </Link>
+
               <Link to="/account/create" className="nav-link">
                 계좌개설
               </Link>
