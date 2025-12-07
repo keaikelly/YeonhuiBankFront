@@ -2,8 +2,10 @@ import { scheduledTxInstance } from "./instance";
 import { request } from "../utils/request";
 
 // 예약이체 생성: POST /api/scheduled-transactions
-export const createScheduleAPI = (payload) => {
-  return request(scheduledTxInstance, "post", "", payload);
+// body 예시:
+// { amount, frequency, rrule, startDate, endDate, memo, fromAccountId, toAccountNum, runTime }
+export const createScheduleAPI = (body) => {
+  return request(scheduledTxInstance, "post", "", body);
 };
 
 // 예약 즉시 실행: POST /api/scheduled-transactions/{id}/run-now
@@ -32,21 +34,10 @@ export const cancelScheduleAPI = (scheduleId) => {
 };
 
 // 예약 수정: PATCH /api/scheduled-transactions/{id}
-export const updateScheduleAPI = (
-  scheduleId,
-  amount,
-  frequency,
-  startDate,
-  endDate,
-  memo
-) => {
-  return request(scheduledTxInstance, "patch", `/${scheduleId}`, {
-    amount,
-    frequency,
-    startDate,
-    endDate,
-    memo,
-  });
+// body 예시:
+// { amount, frequency, rrule, startDate, endDate, memo }
+export const updateScheduleAPI = (scheduleId, body) => {
+  return request(scheduledTxInstance, "patch", `/${scheduleId}`, body);
 };
 
 // 예약 실패 실행 로그 조회: GET /api/scheduled-transactions/{id}/runs/failures

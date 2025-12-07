@@ -95,8 +95,13 @@
   color: var(--muted);
 }
 
+.fieldPlaceholder {
+  min-height: 60px;
+}
+
 .inlineRow {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 6px;
 }
@@ -106,8 +111,20 @@
   color: var(--muted);
 }
 
+.customBox {
+  margin-top: 4px;
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(15, 23, 42, 0.9);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
 .select,
-.field input {
+.field input,
+.textarea {
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid var(--border);
   border-radius: 12px;
@@ -116,8 +133,15 @@
   font-size: 14px;
 }
 
+/* 날짜/시간 피커 아이콘도 밝게 보이도록 */
+.field input[type="date"]::-webkit-calendar-picker-indicator,
+.field input[type="time"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+
 .select:focus,
-.field input:focus {
+.field input:focus,
+.textarea:focus {
   outline: 1px solid rgba(110, 231, 183, 0.6);
 }
 
@@ -151,6 +175,12 @@
 
 .smallButton:hover {
   border-color: rgba(110, 231, 183, 0.5);
+}
+
+.smallButtonActive {
+  background: rgba(110, 231, 183, 0.15);
+  border-color: rgba(110, 231, 183, 0.6);
+  color: var(--accent);
 }
 
 .buttonGroup {
