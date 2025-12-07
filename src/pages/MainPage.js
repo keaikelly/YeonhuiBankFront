@@ -87,19 +87,10 @@ function MainPage() {
                     className={styles.actionChip}
                     onClick={(e) => {
                       e.stopPropagation();
-                      navigate(`/transfer/${acc.accountNum || acc.id}`);
+                      navigate(`/account/${acc.accountNum || acc.id}`);
                     }}
                   >
-                    이체
-                  </span>
-                  <span
-                    className={styles.actionChip}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      navigate(`/schedule/${acc.accountNum || acc.id}`);
-                    }}
-                  >
-                    예약이체
+                    자세히 보기
                   </span>
                 </div>
               </button>
