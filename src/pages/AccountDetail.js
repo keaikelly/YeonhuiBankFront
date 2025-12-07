@@ -28,23 +28,27 @@ function AccountDetail() {
 
         setAccount(mappedAccount);
 
-        // try {
-        //   // 📘 계좌별 로그 조회 API: GET /api/logs/account/{accountNum}
-        //   const txRes = await fetchLogsByAccountAPI(accountNum);
-        //   const txData = txRes?.data?.data ?? txRes?.data ?? {};
-        //   const txContent = txData?.content || txData || [];
-        //   const mappedTransactions = txContent.map((log) => ({
-        //     id: log.logId || log.id,
-        //     title: log.action || log.title || "거래",
-        //     type: log.type || "",
-        //     datetime: log.createdAt || log.datetime || "",
-        //     memo: log.description || log.memo || "",
-        //     amount: Number(log.amount ?? 0),
-        //   }));
-        //   setTransactions(mappedTransactions);
-        // } catch {
-        //   setTransactions([]);
-        // }
+        try {
+          //  계좌별 로그 조회 API: GET /api/logs/account/{accountNum}
+          const txRes = await fetchLogsByAccountAPI(accountNum, {
+            page: 0,
+            size: 50,
+            sort: "",
+          });
+          const txData = txRes?.data?.data ?? txRes?.data ?? {};
+          const txContent = txData?.content || txData || [];
+          const mappedTransactions = txContent.map((log) => ({
+            id: log.logId || log.id,
+            title: log.action || "거래",
+            type: log.action || "",
+            datetime: log.createdAt || "",
+            beforeBalance: Number(log.beforeBalance ?? 0),
+            afterBalance: Number(log.afterBalance ?? 0),
+          }));
+          setTransactions(mappedTransactions);
+        } catch {
+          setTransactions([]);
+        }
 
         // 📘 계좌 기준 예약이체 목록 조회 API:
         // GET /api/scheduled-transactions/account/{fromAccountId}
@@ -73,6 +77,31 @@ function AccountDetail() {
   }, [accountNum]);
 
   const formatAmount = (value) => `￦${Number(value || 0).toLocaleString()}`;
+  const formatDateTime = (v) => {
+    if (!v) return "-";
+    const d = v.slice(0, 10).replace(/-/g, ".");
+    const t = v.slice(11, 16);
+    return `${d} ${t}`;
+  };
+  const formatAction = (action) => {
+    if (!action) return "";
+    switch (action) {
+      case "DEPOSIT":
+        return "입금";
+      case "WITHDRAW":
+        return "출금";
+      case "TRANSFER_CREDIT":
+        return "입금(이체 수신)";
+      case "TRANSFER_DEBIT":
+        return "출금(이체 발신)";
+      case "FRAUD":
+        return "이상거래";
+      case "ADJUST":
+        return "정정/조정";
+      default:
+        return action;
+    }
+  };
 
   if (!account) return null;
 
@@ -98,18 +127,26 @@ function AccountDetail() {
             <div key={item.id} className={styles.transaction}>
               <div>
                 <p className={styles.title}>
-                  {item.title} <span className={styles.chip}>{item.type}</span>
+                  {formatAction(item.type)}{" "}
+                  {/* <span className={styles.chip}>
+                    {formatAmount(item.afterBalance - item.beforeBalance)}
+                  </span> */}
                 </p>
                 <p className={styles.time}>
-                  {item.datetime} · {item.memo}
+                  {formatDateTime(item.datetime)} · 잔액{" "}
+                  {formatAmount(item.afterBalance)}
                 </p>
               </div>
               <p
                 className={`${styles.amount} ${
-                  item.amount > 0 ? styles.positive : ""
+                  item.afterBalance - item.beforeBalance > 0
+                    ? styles.positive
+                    : item.afterBalance - item.beforeBalance < 0
+                    ? styles.negative
+                    : ""
                 }`}
               >
-                {formatAmount(item.amount)}
+                {formatAmount(item.afterBalance - item.beforeBalance)}
               </p>
             </div>
           ))}
@@ -130,7 +167,8 @@ function AccountDetail() {
                   <span className={styles.chip}>{item.scheduledStatus}</span>
                 </p>
                 <p className={styles.time}>
-                  주기: {item.frequency} · 다음 실행: {item.nextRunAt || "-"}
+                  주기: {item.frequency} · 다음 실행:{" "}
+                  {formatDateTime(item.nextRunAt)}
                   {item.memo && <> · 메모: {item.memo}</>}
                 </p>
               </div>

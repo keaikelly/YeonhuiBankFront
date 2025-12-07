@@ -27,12 +27,13 @@
 
 .form {
   display: flex;
+  flex-direction: column;
   gap: 8px;
   margin-bottom: 10px;
 }
 
 .input {
-  flex: 1;
+  width: 100%;
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid var(--border);
   border-radius: 12px;
@@ -47,6 +48,46 @@
   padding: 10px 14px;
   font-weight: 700;
   cursor: pointer;
+}
+
+.dateGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dateLabel {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.dateRow {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dateSeparator {
+  display: none;
+}
+
+.dateToggleRow {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.secondaryButton {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 8px 10px;
+  font-size: 12px;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.secondaryButton:hover {
+  border-color: rgba(110, 231, 183, 0.5);
 }
 
 .list {
