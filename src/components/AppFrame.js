@@ -44,9 +44,6 @@ function AppFrame({ children }) {
               <Link to="/abnormal" className="nav-link">
                 이상거래
               </Link>
-              <Link to="/runs" className="nav-link">
-                예약로그
-              </Link>
               <button type="button" className="nav-link" onClick={handleLogout}>
                 로그아웃
               </button>

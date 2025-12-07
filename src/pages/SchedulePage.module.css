@@ -37,14 +37,14 @@
 .stack {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 }
 
 .scheduleList {
   background: var(--panel-2);
   border: 1px solid var(--border);
   border-radius: 14px;
-  padding: 10px;
+  padding: 10px 10px 12px;
 }
 
 .schedule {
@@ -68,6 +68,7 @@
   margin: 0;
   color: var(--muted);
   font-size: 13px;
+  line-height: 1.5;
 }
 
 .amount {
@@ -90,6 +91,17 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.inlineRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.suffix {
   font-size: 13px;
   color: var(--muted);
 }
@@ -119,11 +131,88 @@
   font-weight: 800;
   cursor: pointer;
   transition: transform 140ms ease, box-shadow 140ms ease;
+  margin-top: 4px;
 }
 
 .primary:hover {
   transform: translateY(-1px);
   box-shadow: 0 10px 24px rgba(34, 211, 238, 0.25);
+}
+
+.smallButton {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 11px;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.smallButton:hover {
+  border-color: rgba(110, 231, 183, 0.5);
+}
+
+.buttonGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-end;
+}
+
+.buttonRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.link {
+  margin-top: 8px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--muted);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.modalBackdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 40;
+}
+
+.modal {
+  width: 100%;
+  max-width: 380px;
+  background: var(--panel);
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  padding: 16px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55);
+}
+
+.modalTitle {
+  margin: 0 0 6px 0;
+  font-size: 18px;
+}
+
+.modalDesc {
+  margin: 0 0 10px 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
 }
 
 @media (max-width: 480px) {
