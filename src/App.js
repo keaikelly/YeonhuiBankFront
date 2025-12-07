@@ -7,6 +7,7 @@ import SignupPage from "./pages/SignupPage";
 import MainPage from "./pages/MainPage";
 import AccountDetail from "./pages/AccountDetail";
 import TransferPage from "./pages/TransferPage";
+import VirtualATMPage from "./pages/VirtualATMPage";
 import ScheduleContainer from "./pages/SchedulePage";
 import AccountCreatePage from "./pages/AccountCreatePage";
 import LogsPage from "./pages/LogsPage";
@@ -25,6 +26,7 @@ function App() {
           <Route path="/account/create" element={<AccountCreatePage />} />
           <Route path="/account/:accountNum" element={<AccountDetail />} />
           <Route path="/transfer" element={<TransferPage />} />
+          <Route path="/virtual-atm" element={<VirtualATMPage />} />
           <Route path="/schedule/:accountId" element={<ScheduleContainer />} />
           <Route path="/logs" element={<LogsPage />} />
           <Route path="/abnormal" element={<AbnormalPage />} />

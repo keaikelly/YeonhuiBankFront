@@ -32,6 +32,9 @@ function AppFrame({ children }) {
               <Link to="/transfer" className="nav-link">
                 이체
               </Link>
+              <Link to="/virtual-atm" className="nav-link">
+                가상입출금
+              </Link>
               <Link to="/schedule/any" className="nav-link">
                 예약이체
               </Link>
