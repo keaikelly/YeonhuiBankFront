@@ -14,36 +14,16 @@
   margin-bottom: 10px;
 }
 
-.eyebrow {
-  color: var(--muted);
-  margin: 0 0 4px 0;
-  font-size: 14px;
-}
-
-.title {
+.heading {
   margin: 0;
   font-size: 18px;
-}
-
-.pill {
-  background: rgba(110, 231, 183, 0.15);
-  color: var(--accent);
-  border: 1px solid rgba(110, 231, 183, 0.25);
-  padding: 8px 12px;
-  border-radius: 14px;
-  font-weight: 600;
-  font-size: 13px;
-}
-
-.small {
-  padding: 6px 10px;
-  font-size: 12px;
 }
 
 .formGrid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
+  margin-bottom: 12px;
 }
 
 .field {
@@ -54,15 +34,23 @@
   color: var(--muted);
 }
 
+.label {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.select,
 .field input {
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid var(--border);
   border-radius: 12px;
-  padding: 12px 10px;
+  padding: 10px;
   color: var(--text);
   font-size: 14px;
 }
 
+.select:focus,
 .field input:focus {
   outline: 1px solid rgba(110, 231, 183, 0.6);
 }
@@ -73,7 +61,7 @@
   color: #0b1020;
   border: none;
   border-radius: 14px;
-  padding: 14px;
+  padding: 12px;
   font-weight: 800;
   cursor: pointer;
   transition: transform 140ms ease, box-shadow 140ms ease;
@@ -82,6 +70,24 @@
 .primary:hover {
   transform: translateY(-1px);
   box-shadow: 0 10px 24px rgba(34, 211, 238, 0.25);
+}
+
+.infoCard {
+  margin-top: 10px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px;
+}
+
+.subAmount {
+  margin: 4px 0 10px;
+  font-size: 15px;
+}
+
+.muted {
+  color: var(--muted);
+  font-size: 12px;
 }
 
 @media (max-width: 480px) {
@@ -93,3 +99,4 @@
     grid-column: span 1;
   }
 }
+

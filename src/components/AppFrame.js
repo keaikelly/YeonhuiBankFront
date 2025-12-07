@@ -47,6 +47,9 @@ function AppFrame({ children }) {
               <Link to="/abnormal" className="nav-link">
                 이상거래
               </Link>
+              <Link to="/failure-reasons" className="nav-link">
+                실패코드
+              </Link>
               <button type="button" className="nav-link" onClick={handleLogout}>
                 로그아웃
               </button>

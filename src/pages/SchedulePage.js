@@ -9,6 +9,7 @@ import {
   fetchScheduleDetailAPI,
   cancelScheduleAPI,
   updateScheduleAPI,
+  runNowScheduleAPI,
   fetchMySchedulesAPI,
   fetchMySchedulesByStatusAPI,
 } from "../api/scheduledTransactions";
@@ -225,6 +226,20 @@ function ScheduleContainer() {
     await loadSchedules();
   };
 
+  // -----------------------------------------
+  // 즉시 실행
+  // -----------------------------------------
+  const handleRunNow = async (id) => {
+    try {
+      await runNowScheduleAPI(id);
+      alert("예약이체를 즉시 실행했습니다.");
+      await loadSchedules();
+    } catch (e) {
+      console.error(e);
+      alert("즉시 실행에 실패했습니다.");
+    }
+  };
+
   // ---------------------------
   // 실행 로그 보기 (예약이체 로그)
   // ---------------------------
@@ -323,6 +338,13 @@ function ScheduleContainer() {
                     onClick={() => handleCancel(item.scheduleId)}
                   >
                     취소
+                  </button>
+
+                  <button
+                    className={styles.smallButton}
+                    onClick={() => handleRunNow(item.scheduleId)}
+                  >
+                    즉시 실행
                   </button>
 
                   <button
