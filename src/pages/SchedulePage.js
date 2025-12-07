@@ -9,12 +9,10 @@ import {
   fetchScheduleDetailAPI,
   cancelScheduleAPI,
   updateScheduleAPI,
-  fetchScheduleFailuresAPI,
   fetchMySchedulesAPI,
   fetchMySchedulesByStatusAPI,
 } from "../api/scheduledTransactions";
-//즉시실행, 출금계좌기준조회(계좌페이지에) API는 해당 페이지에서 사용하지 않음
-
+import { fetchRunsByScheduleAPI } from "../api/scheduledTransferRuns";
 import { fetchMyAccountsAPI } from "../api/accounts";
 
 function ScheduleContainer() {
@@ -29,6 +27,10 @@ function ScheduleContainer() {
   // === 수정 모달 ===
   const [showEditModal, setShowEditModal] = useState(false);
   const [editData, setEditData] = useState(null);
+
+  // === 실행 로그 모달 ===
+  const [showRunModal, setShowRunModal] = useState(false);
+  const [runLogs, setRunLogs] = useState([]);
 
   // -----------------------------------------
   // 생성 폼
@@ -55,6 +57,16 @@ function ScheduleContainer() {
     if (f.frequency === "MONTHLY")
       return `FREQ=MONTHLY;BYMONTHDAY=${f.monthday}`;
     return null;
+  };
+
+  // -----------------------------------------
+  // 공통: 모달 열 때 스크롤을 맨 위로
+  // -----------------------------------------
+  const scrollFrameToTop = () => {
+    const frame = document.querySelector(".phone-frame");
+    if (frame) {
+      frame.scrollTo({ top: 0, behavior: "smooth" });
+    }
   };
 
   // -----------------------------------------
@@ -146,6 +158,8 @@ function ScheduleContainer() {
   // -----------------------------------------
   const handleEdit = async (scheduleId) => {
     try {
+      scrollFrameToTop();
+
       const res = await fetchScheduleDetailAPI(scheduleId);
       const data = res?.data?.data;
       if (!data) return alert("수정 정보를 불러오지 못했습니다.");
@@ -211,11 +225,22 @@ function ScheduleContainer() {
     await loadSchedules();
   };
 
-  const handleViewFailures = async (id) => {
-    const res = await fetchScheduleFailuresAPI(id);
-    const list = res?.data?.data ?? [];
-    if (!list.length) return alert("실패 이력 없음");
-    alert(`마지막 실패 이유: ${list[0].failureReasonDesc}`);
+  // ---------------------------
+  // 실행 로그 보기 (예약이체 로그)
+  // ---------------------------
+  const handleViewRuns = async (scheduleId) => {
+    try {
+      scrollFrameToTop();
+
+      const res = await fetchRunsByScheduleAPI(scheduleId);
+      const data = res?.data?.data ?? res?.data ?? [];
+      const list = Array.isArray(data) ? data : [];
+      setRunLogs(list);
+      setShowRunModal(true);
+    } catch (e) {
+      console.error(e);
+      alert("예약 실행 로그를 불러오지 못했습니다.");
+    }
   };
 
   const formatAmount = (v) => `₩${Number(v).toLocaleString()}`;
@@ -243,64 +268,73 @@ function ScheduleContainer() {
 
         {/* 예약 리스트 */}
         <div className={styles.scheduleList}>
-          {schedules.map((item) => (
-            <div key={item.scheduleId} className={styles.schedule}>
-              <div>
-                <p className={styles.title}>{formatAmount(item.amount)}</p>
-                <p className={styles.time}>
-                  계좌 {item.fromAccountId} → {item.toAccountId}
-                  <br />
-                  상태: {item.scheduledStatus} / {item.frequency}
-                  <br />
-                  다음 실행: {formatDateTime(item.nextRunAt)}
-                  {item.memo && (
-                    <span className={styles.muted}>메모: {item.memo}</span>
+          {schedules.map((item) => {
+            const fromAcc = accounts.find(
+              (a) => Number(a.accountId) === Number(item.fromAccountId)
+            );
+            const fromLabel = fromAcc
+              ? fromAcc.accountNum
+              : `계좌ID ${item.fromAccountId}`;
+
+            return (
+              <div key={item.scheduleId} className={styles.schedule}>
+                <div>
+                  <p className={styles.title}>{formatAmount(item.amount)}</p>
+                  <p className={styles.time}>
+                    {fromLabel} → {item.toAccountId} (ID)
+                    <br />
+                    상태: {item.scheduledStatus} / {item.frequency}
+                    <br />
+                    다음 실행: {formatDateTime(item.nextRunAt)}
+                    {item.memo && (
+                      <span className={styles.muted}>메모: {item.memo}</span>
+                    )}
+                  </p>
+                </div>
+
+                <div className={styles.buttonGroup}>
+                  <button
+                    className={styles.smallButton}
+                    onClick={() => handleEdit(item.scheduleId)}
+                  >
+                    수정
+                  </button>
+
+                  {item.scheduledStatus === "ACTIVE" && (
+                    <button
+                      className={styles.smallButton}
+                      onClick={() => handlePause(item.scheduleId)}
+                    >
+                      일시정지
+                    </button>
                   )}
-                </p>
-              </div>
 
-              <div className={styles.buttonGroup}>
-                <button
-                  className={styles.smallButton}
-                  onClick={() => handleEdit(item.scheduleId)}
-                >
-                  수정
-                </button>
+                  {item.scheduledStatus === "PAUSED" && (
+                    <button
+                      className={styles.smallButton}
+                      onClick={() => handleResume(item.scheduleId)}
+                    >
+                      재개
+                    </button>
+                  )}
 
-                {item.scheduledStatus === "ACTIVE" && (
                   <button
                     className={styles.smallButton}
-                    onClick={() => handlePause(item.scheduleId)}
+                    onClick={() => handleCancel(item.scheduleId)}
                   >
-                    일시정지
+                    취소
                   </button>
-                )}
 
-                {item.scheduledStatus === "PAUSED" && (
                   <button
                     className={styles.smallButton}
-                    onClick={() => handleResume(item.scheduleId)}
+                    onClick={() => handleViewRuns(item.scheduleId)}
                   >
-                    재개
+                    실행 로그
                   </button>
-                )}
-
-                <button
-                  className={styles.smallButton}
-                  onClick={() => handleCancel(item.scheduleId)}
-                >
-                  취소
-                </button>
-
-                <button
-                  className={styles.smallButton}
-                  onClick={() => handleViewFailures(item.scheduleId)}
-                >
-                  실패로그
-                </button>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
 
           {schedules.length === 0 && (
             <p className={styles.muted}>등록된 예약이 없습니다.</p>
@@ -309,11 +343,149 @@ function ScheduleContainer() {
 
         <button
           className={styles.primary}
-          onClick={() => setShowCreateModal(true)}
+          onClick={() => {
+            scrollFrameToTop();
+            setShowCreateModal(true);
+          }}
         >
           새 예약 만들기
         </button>
       </section>
+
+      {/* 새 예약 생성 모달 */}
+      {showCreateModal && (
+        <div className={styles.modalBackdrop}>
+          <div className={styles.modal}>
+            <h3 className={styles.modalTitle}>새 예약이체 등록</h3>
+            <p className={styles.modalDesc}>
+              보내는 계좌, 받는 계좌 ID, 금액과 주기를 입력해 자동 이체를
+              설정하세요.
+            </p>
+
+            <form className={styles.formGrid} onSubmit={handleSubmit}>
+              <label className={styles.field}>
+                <span>보내는 계좌</span>
+                <select
+                  className={styles.select}
+                  value={form.from}
+                  onChange={(e) =>
+                    setForm((prev) => ({ ...prev, from: e.target.value }))
+                  }
+                >
+                  {accounts.map((a) => (
+                    <option key={a.accountId} value={String(a.accountId)}>
+                      {a.accountNum}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label className={styles.field}>
+                <span>받는 계좌 accountId</span>
+                <input
+                  className={styles.select}
+                  placeholder="예: 12"
+                  value={form.to}
+                  onChange={(e) =>
+                    setForm((prev) => ({ ...prev, to: e.target.value }))
+                  }
+                />
+              </label>
+
+              <label className={styles.field}>
+                <span>금액</span>
+                <input
+                  type="number"
+                  value={form.amount}
+                  onChange={(e) =>
+                    setForm((prev) => ({ ...prev, amount: e.target.value }))
+                  }
+                />
+              </label>
+
+              <label className={styles.field}>
+                <span>메모</span>
+                <input
+                  value={form.memo}
+                  onChange={(e) =>
+                    setForm((prev) => ({ ...prev, memo: e.target.value }))
+                  }
+                />
+              </label>
+
+              <label className={styles.field}>
+                <span>주기</span>
+                <select
+                  className={styles.select}
+                  value={form.frequency}
+                  onChange={(e) =>
+                    setForm((prev) => ({
+                      ...prev,
+                      frequency: e.target.value,
+                    }))
+                  }
+                >
+                  <option value="DAILY">매일</option>
+                  <option value="WEEKLY">매주</option>
+                  <option value="MONTHLY">매월</option>
+                </select>
+              </label>
+
+              <label className={styles.field}>
+                <span>시작일</span>
+                <input
+                  type="date"
+                  value={form.startDate}
+                  onChange={(e) =>
+                    setForm((prev) => ({
+                      ...prev,
+                      startDate: e.target.value,
+                    }))
+                  }
+                />
+              </label>
+
+              <label className={styles.field}>
+                <span>종료일(선택)</span>
+                <input
+                  type="date"
+                  value={form.endDate}
+                  onChange={(e) =>
+                    setForm((prev) => ({
+                      ...prev,
+                      endDate: e.target.value,
+                    }))
+                  }
+                />
+              </label>
+
+              <label className={styles.field}>
+                <span>실행 시간</span>
+                <input
+                  type="time"
+                  value={form.time}
+                  onChange={(e) =>
+                    setForm((prev) => ({ ...prev, time: e.target.value }))
+                  }
+                />
+              </label>
+
+              <div className={styles.modalActions}>
+                <button
+                  type="button"
+                  className={styles.smallButton}
+                  onClick={() => setShowCreateModal(false)}
+                >
+                  닫기
+                </button>
+                <button className={styles.primary} type="submit">
+                  예약이체 등록
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* 수정 모달 */}
       {showEditModal && editData && (
@@ -400,6 +572,45 @@ function ScheduleContainer() {
               </button>
               <button className={styles.primary} onClick={handleSaveEdit}>
                 저장
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 실행 로그 모달 */}
+      {showRunModal && (
+        <div className={styles.modalBackdrop}>
+          <div className={styles.modal}>
+            <h3 className={styles.modalTitle}>예약 실행 로그</h3>
+            <p className={styles.modalDesc}>
+              선택한 예약이체에 대해 실행된 이력입니다.
+            </p>
+
+            <div className={styles.runList}>
+              {runLogs.length === 0 ? (
+                <p className={styles.muted}>실행 이력이 없습니다.</p>
+              ) : (
+                runLogs.map((run) => (
+                  <div key={run.runId} className={styles.runItem}>
+                    <div className={styles.runHeader}>
+                      <span className={styles.runResult}>{run.result}</span>
+                      <span className={styles.runTime}>{run.executedAt}</span>
+                    </div>
+                    {run.message && (
+                      <p className={styles.runMessage}>{run.message}</p>
+                    )}
+                  </div>
+                ))
+              )}
+            </div>
+
+            <div className={styles.modalActions}>
+              <button
+                className={styles.smallButton}
+                onClick={() => setShowRunModal(false)}
+              >
+                닫기
               </button>
             </div>
           </div>

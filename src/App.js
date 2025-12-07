@@ -12,7 +12,6 @@ import AccountCreatePage from "./pages/AccountCreatePage";
 import LogsPage from "./pages/LogsPage";
 import AbnormalPage from "./pages/AbnormalPage";
 import TransferLimitPage from "./pages/TransferLimitPage";
-import ScheduleRunPage from "./pages/ScheduleRunPage";
 
 function App() {
   return (
@@ -30,7 +29,6 @@ function App() {
           <Route path="/logs" element={<LogsPage />} />
           <Route path="/abnormal" element={<AbnormalPage />} />
           <Route path="/limits" element={<TransferLimitPage />} />
-          <Route path="/runs" element={<ScheduleRunPage />} />
           <Route path="*" element={<Navigate replace to="/" />} />
         </Routes>
       </AppFrame>
