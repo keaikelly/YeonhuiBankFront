@@ -93,6 +93,34 @@ const TransferPage = () => {
     const baseAmount = Number(amount || 0);
 
     try {
+      // 1) 이체 전 현재 이상거래 건수 조회 (출금 + 수신 계좌 기준)
+      const getTotalAbnormalCount = async () => {
+        try {
+          const fromRes = await fetchAbnormalByAccountAPI(
+            currentAccount.accountNum
+          );
+          const fromData = fromRes?.data?.data ?? fromRes?.data ?? [];
+
+          let toData = [];
+          try {
+            const toRes = await fetchAbnormalByAccountAPI(toAccount);
+            toData = toRes?.data?.data ?? toRes?.data ?? [];
+          } catch {
+            // 수신 계좌가 외부 계좌 등일 경우 실패할 수 있으므로 무시
+          }
+
+          const fromCount =
+            Array.isArray(fromData) && fromData.length ? fromData.length : 0;
+          const toCount =
+            Array.isArray(toData) && toData.length ? toData.length : 0;
+          return fromCount + toCount;
+        } catch {
+          return 0;
+        }
+      };
+
+      const beforeCount = await getTotalAbnormalCount();
+
       const payload = {
         fromAccountNum: currentAccount.accountNum,
         toAccountNum: toAccount,
@@ -102,13 +130,17 @@ const TransferPage = () => {
       await createTransferAPI(payload);
 
       try {
-        const res = await fetchAbnormalByAccountAPI(currentAccount.accountNum);
-        const data = res?.data?.data ?? res?.data ?? [];
-        if (Array.isArray(data) && data.length > 0) {
-          window.alert(`이상거래 알림 ${data.length}건이 감지되었습니다.`);
+        // 2) 이체 후 이상거래 건수 다시 조회
+        const afterCount = await getTotalAbnormalCount();
+
+        // 3) 이체 전보다 이상거래 건수가 증가했을 때만 알림
+        if (afterCount > beforeCount) {
+          window.alert(
+            "이상거래가 감지되었습니다. 상세 내용은 이상거래 메뉴에서 확인해 주세요."
+          );
         }
       } catch {
-        // ignore
+        // 이상거래 조회 실패는 무시
       }
 
       window.alert("처리가 완료되었습니다.");
@@ -116,8 +148,12 @@ const TransferPage = () => {
       setMemo("");
       setToAccount("");
       await loadHistory(currentAccount.accountId);
-    } catch {
-      window.alert("요청 처리에 실패했습니다.");
+    } catch (e) {
+      const msg =
+        e?.response?.data?.message ||
+        e?.response?.data?.result ||
+        "요청 처리에 실패했습니다.";
+      window.alert(msg);
     }
   };
 
