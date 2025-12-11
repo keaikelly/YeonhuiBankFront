@@ -25,8 +25,8 @@ function AccountCreatePage() {
         initialBalance: Number(initialBalance || 0),
       });
       window.alert("계좌가 생성되었습니다.");
-      // 생성된 계좌 상세 페이지로 이동
-      navigate(`/account/${accountNum}`);
+      // 생성 직후 이체 한도 설정 페이지로 이동
+      navigate("/limits");
     } catch (err) {
       window.alert("계좌 생성에 실패했습니다.");
     } finally {
