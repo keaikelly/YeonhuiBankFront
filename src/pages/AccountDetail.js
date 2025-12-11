@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { fetchAccountAPI } from "../api/accounts";
+import { fetchAccountAPI, fetchMyAccountsAPI } from "../api/accounts";
 import { fetchLogsByAccountAPI } from "../api/logs";
 import { fetchSchedulesByFromAccountAPI } from "../api/scheduledTransactions";
 import styles from "./AccountDetail.module.css";
@@ -11,10 +11,21 @@ function AccountDetail() {
   const [account, setAccount] = useState(null);
   const [transactions, setTransactions] = useState([]);
   const [schedules, setSchedules] = useState([]);
+  const [accounts, setAccounts] = useState([]);
 
   useEffect(() => {
     const load = async () => {
       try {
+        // 내 계좌 목록 (예약이체 수취 계좌 번호 매핑용)
+        try {
+          const accRes = await fetchMyAccountsAPI();
+          const accData = accRes?.data?.data ?? accRes?.data ?? {};
+          const accContent = accData?.content || accData || [];
+          setAccounts(Array.isArray(accContent) ? accContent : []);
+        } catch {
+          setAccounts([]);
+        }
+
         // 계좌 정보 불러오기
         const res = await fetchAccountAPI(accountNum);
         const data = res?.data?.data ?? res?.data ?? {};
@@ -23,7 +34,8 @@ function AccountDetail() {
           id: data.accountId || data.id,
           accountNum: data.accountNum,
           balance: data.balance || 0,
-          limit: data.dailyLimitAmt || 0,
+          dailyLimit: data.dailyLimitAmt || 0,
+          perTxLimit: data.perTxLimitAmt || 0,
         };
 
         setAccount(mappedAccount);
@@ -68,6 +80,38 @@ function AccountDetail() {
           }
         } catch {
           setSchedules([]);
+        }
+
+        // 🔹 활성 이체 한도 조회: GET /api/transfer-limits/active/{accountNum}
+        try {
+          const limitRes = await fetchActiveLimitsAPI(accountNum);
+          const limitData = limitRes?.data?.data ?? limitRes?.data ?? {};
+          const limitContent = Array.isArray(limitData?.content)
+            ? limitData.content
+            : Array.isArray(limitData)
+            ? limitData
+            : [limitData];
+
+          const active = limitContent[0];
+          if (active && (active.dailyLimitAmt != null || active.perTxLimitAmt != null)) {
+            setAccount((prev) =>
+              prev
+                ? {
+                    ...prev,
+                    dailyLimit:
+                      active.dailyLimitAmt != null
+                        ? active.dailyLimitAmt
+                        : prev.dailyLimit,
+                    perTxLimit:
+                      active.perTxLimitAmt != null
+                        ? active.perTxLimitAmt
+                        : prev.perTxLimit,
+                  }
+                : prev
+            );
+          }
+        } catch {
+          // 한도 조회 실패 시, 계좌 기본 값(0 또는 dailyLimitAmt)을 그대로 사용
         }
       } catch {
         setAccount(null);
@@ -117,8 +161,14 @@ function AccountDetail() {
           <p className={styles.subAmount}>{account.accountNum}</p>
           <p className={styles.label}>현재잔액</p>
           <p className={styles.balance}>{formatAmount(account.balance)}</p>
-          <p className={styles.label}>하루 이체 한도</p>
-          <p className={styles.subAmount}>{formatAmount(account.limit)}</p>
+          <p className={styles.label}>1일 한도</p>
+          <p className={styles.subAmount}>
+            {formatAmount(account.dailyLimit)}
+          </p>
+          <p className={styles.label}>1회 한도</p>
+          <p className={styles.subAmount}>
+            {formatAmount(account.perTxLimit)}
+          </p>
         </div>
 
         {/* 거래 내역 */}
@@ -165,6 +215,27 @@ function AccountDetail() {
                 <p className={styles.title}>
                   {formatAmount(item.amount)}{" "}
                   <span className={styles.chip}>{item.scheduledStatus}</span>
+                </p>
+                <p className={styles.time}>
+                  출금 계좌: {account.accountNum} · 수취 계좌:{" "}
+                  {(() => {
+                    // 1순위: API가 바로 내려주는 toAccountNum
+                    if (item.toAccountNum) return item.toAccountNum;
+
+                    // 2순위: 내 계좌 목록에서 accountId 기반으로 매핑
+                    const toAcc = accounts.find(
+                      (a) =>
+                        item.toAccountId != null &&
+                        Number(a.accountId) === Number(item.toAccountId)
+                    );
+                    if (toAcc?.accountNum) return toAcc.accountNum;
+
+                    // 3순위: id만 있을 때는 식별 가능한 형태로 표시
+                    if (item.toAccountId != null) {
+                      return `계좌ID ${item.toAccountId}`;
+                    }
+                    return "-";
+                  })()}
                 </p>
                 <p className={styles.time}>
                   주기: {item.frequency} · 다음 실행:{" "}
