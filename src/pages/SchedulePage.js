@@ -32,6 +32,8 @@ function ScheduleContainer() {
   // 실행 로그 모달
   const [showRunModal, setShowRunModal] = useState(false);
   const [runLogs, setRunLogs] = useState([]);
+  // 프론트에서 즉시실행(run-now) 시 발생한 실패 메시지를 임시 실행로그로 보관
+  const [localRunErrors, setLocalRunErrors] = useState({});
 
   // -----------------------------
   // 생성 폼 상태
@@ -416,7 +418,23 @@ function ScheduleContainer() {
       await loadSchedules();
     } catch (e) {
       console.error(e);
-      alert("즉시 실행 실패");
+      const msg =
+        e?.response?.data?.message ||
+        e?.response?.data?.result ||
+        "예약이체 즉시 실행에 실패했습니다.";
+      alert(msg);
+
+      // 즉시실행 실패를 실행 로그 형태로도 남겨, 나중에 실행로그 모달에서 확인 가능하게 함
+      const errorLog = {
+        runId: `local-${Date.now()}`,
+        result: "FAILURE",
+        executedAt: new Date().toISOString(),
+        message: msg,
+      };
+      setLocalRunErrors((prev) => ({
+        ...prev,
+        [id]: [...(prev[id] || []), errorLog],
+      }));
     }
   };
 
@@ -424,9 +442,15 @@ function ScheduleContainer() {
     try {
       scrollFrameToTop();
       const res = await fetchRunsByScheduleAPI(scheduleId);
-      const data = res?.data?.data ?? res?.data ?? [];
-      const list = Array.isArray(data) ? data : [];
-      setRunLogs(list);
+      const raw = res?.data?.data ?? res?.data ?? {};
+      const list = Array.isArray(raw?.content)
+        ? raw.content
+        : Array.isArray(raw)
+        ? raw
+        : [];
+      const extra = localRunErrors[scheduleId] || [];
+      // 백엔드 실행로그 + 프론트에서 수집한 run-now 실패로그 함께 표시
+      setRunLogs([...list, ...extra]);
       setShowRunModal(true);
     } catch (e) {
       console.error(e);
@@ -510,7 +534,15 @@ function ScheduleContainer() {
               ? fromAcc.accountNum
               : `계좌ID ${item.fromAccountId}`;
 
-            const toLabel = item.toAccountNum || item.toAccountId;
+            const toAcc = accounts.find(
+              (a) =>
+                item.toAccountId != null &&
+                Number(a.accountId) === Number(item.toAccountId)
+            );
+            const toLabel =
+              item.toAccountNum ||
+              toAcc?.accountNum ||
+              (item.toAccountId != null ? `계좌ID ${item.toAccountId}` : "-");
 
             return (
               <div key={item.scheduleId} className={styles.schedule}>

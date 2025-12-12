@@ -1,70 +1,96 @@
-# Getting Started with Create React App
+# 🏦 YeonhuiBank – 인터넷뱅킹 & 예약이체 시스템
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+스프링 부트와 React 기반으로 구현한 **모의 인터넷뱅킹 서비스**입니다.  
+계좌 관리, 즉시 이체, 예약이체 생성/수정/재시도, 실행 로그 조회 등 실제 금융 흐름을 반영한 기능들을 포함하고 있습니다.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## 🎥 시연 영상
 
-### `npm start`
+👉 https://youtu.be/vb5vZrfHvyU
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+---
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 📂 Github Repository
 
-### `npm test`
+### 🔹 Backend
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+https://github.com/keaikelly/YeonhuiBank
 
-### `npm run build`
+### 🔹 Frontend
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+https://github.com/keaikelly/YeonhuiBankFront
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+---
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## ✨ 주요 기능
 
-### `npm run eject`
+### 1) 계좌 관리
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+- 계좌 생성 / 조회
+- 입금 / 출금 / 계좌 간 즉시 이체
+- 거래내역 확인
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+---
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### 2) 예약이체 (Scheduled Transfer)
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+스케줄 기반 자동 이체 기능 구현:
 
-## Learn More
+- 예약이체 생성, 수정, 취소
+- 반복 주기: **ONCE / DAILY / WEEKLY / MONTHLY / CUSTOM(RRULE)**
+- nextRunAt 기반 실행 스케줄링
+- RRULE 기반 커스텀 반복 실행
+- **실행 실패 시 자동 재시도 (최대 3회)**
+- 반복 실패 시 더 이상 실행되지 않음
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+---
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### 3) 실행 로그(ScheduledTransferRun)
 
-### Code Splitting
+예약이체 실행마다 로그가 생성되며 다음을 기록함:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+---
 
-### Analyzing the Bundle Size
+### 4) 자동 재시도 로직
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+예약이체 실행 실패 시 다음과 같은 로직으로 처리됨:
 
-### Making a Progressive Web App
+1. retryNo = 0에서 실패 발생
+2. nextRetryAt = now + 10분
+3. retryNo < 3 → 재시도
+4. retryNo == maxRetries → 예약이체 실행 종료
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+---
 
-### Advanced Configuration
+### 5) 스케줄러 동작 (@Scheduled)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+매 분 실행되며 다음 수행:
 
-### Deployment
+- now >= nextRunAt 인 예약 이체 조회
+- executeSchedule() 호출
+- 성공/실패 기록 후 nextRunAt 갱신
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+---
 
-### `npm run build` fails to minify
+## 🧱 기술 스택
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### Backend
+
+- Java 17
+- Spring Boot 3
+- Spring Data JPA
+- Spring Scheduler
+- MySQL
+
+### Frontend
+
+- React
+- React Router
+- Axios
+
+---
+
+## 📁 프로젝트 구조
+
+### Backend
